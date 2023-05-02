@@ -1,25 +1,30 @@
-import Hapi from '@hapi/hapi'
-import config from '../config.js'
-import ClientError from './exceptions/ClientError.js'
-import Jwt from '@hapi/jwt'
+const Hapi = require('@hapi/hapi')
+const config = require('../../config.js')
+const ClientError = require('../exceptions/ClientError.js')
+const Jwt = require('@hapi/jwt')
 
 //USERS
-import users from './api/users/index.js'
-import UserService from './services/UserService.js'
-import UserValidator from './validators/users/index.js'
+const users = require('../api/users/index.js')
+const UserService = require('../services/UserService.js')
+const UserValidator = require('../validators/users/index.js')
 
 //AUTH
-import authentication from './api/authentication/index.js'
-import AuthenticationService from './services/AuthenticationService.js'
-import AuthValidator from './validators/authentications/index.js'
-import TokenManager from './token/index.js'
+const authentication = require('../api/authentication/index.js')
+const AuthenticationService = require('../services/AuthenticationService.js')
+const AuthValidator = require('../validators/authentications/index.js')
+const TokenManager = require('../utils/token/index.js')
 
 //MAILIN
-import mailin from './api/mailin/index.js'
-import MailinService from './services/MailinService.js'
-import MailinValidator from './validators/mailin/index.js'
+const mailin = require('../api/mailin/index.js')
+const MailinService = require('../services/MailinService.js')
+const MailinValidator = require('../validators/mailin/index.js')
 
-const init = async () => {
+//MAILOUT
+const mailout = require('../api/mailout/index.js')
+const MailoutService = require('../services/MailoutService.js')
+const MailoutValidator = require('../validators/mailout/index.js')
+
+const createServer = async () => {
   const server = Hapi.server({
     host: config.server.host,
     port: config.server.port,
@@ -28,6 +33,12 @@ const init = async () => {
         origin: ['*']
       }
     }
+  })
+
+  server.route({
+    method: 'GET',
+    path: '/',
+    handler: () => ({ value: 'hello world!' })
   })
 
   await server.register([
@@ -77,6 +88,13 @@ const init = async () => {
         service: new MailinService(),
         validator: MailinValidator
       }
+    },
+    {
+      plugin: mailout,
+      options: {
+        service: new MailoutService(),
+        validator: MailoutValidator
+      }
     }
   ])
 
@@ -106,8 +124,7 @@ const init = async () => {
     return h.continue
   })
 
-  await server.start()
-  console.log(`Server is running on ${server.info.uri}`)
+  return server
 }
 
-init()
+module.exports = createServer

@@ -1,6 +1,5 @@
-import pkg from 'pg'
-import InvariantError from '../exceptions/InvariantError.js'
-const { Pool } = pkg
+const { Pool } = require('pg')
+const InvariantError = require('../exceptions/InvariantError')
 class AuthenticationService {
   constructor() {
     this._pool = new Pool()
@@ -34,4 +33,4 @@ class AuthenticationService {
   }
 }
 
-export default AuthenticationService
+module.exports = AuthenticationService

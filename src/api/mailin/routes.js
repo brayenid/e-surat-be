@@ -25,4 +25,4 @@ const routes = (handler) => [
   }
 ]
 
-export default routes
+module.exports = routes

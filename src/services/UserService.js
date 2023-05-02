@@ -1,10 +1,8 @@
-import pkg from 'pg'
-import bcryptPassword from '../utils/bcrypt/index.js'
-import { nanoid } from 'nanoid'
-import InvariantError from '../exceptions/InvariantError.js'
-import AuthenticationError from '../exceptions/AuthenticationError.js'
-
-const { Pool } = pkg
+const { Pool } = require('pg')
+const { nanoid } = require('nanoid')
+const InvariantError = require('../exceptions/InvariantError.js')
+const AuthenticationError = require('../exceptions/AuthenticationError.js')
+const bcryptPassword = require('../utils/bcrypt/index.js')
 
 class UserService {
   constructor() {
@@ -12,21 +10,22 @@ class UserService {
   }
 
   async addUser(payload) {
-    const { username, fullname, role, password } = payload
-    await this._checkUsername(username)
-    const id = `user-${nanoid(8)}`
-    const hashedPassword = await bcryptPassword.hash(password)
-    const query = {
-      text: 'INSERT INTO users VALUES($1, $2, $3, $4, $5) RETURNING id',
-      values: [id, username, fullname, role, hashedPassword]
-    }
+    try {
+      const { username, fullname, role, password } = payload
+      await this._checkUsername(username)
+      const id = `user-${nanoid(8)}`
+      const hashedPassword = await bcryptPassword.hash(password)
+      const query = {
+        text: 'INSERT INTO users VALUES($1, $2, $3, $4, $5) RETURNING id',
+        values: [id, username, fullname, role, hashedPassword]
+      }
 
-    const { rowCount, rows } = await this._pool.query(query)
-
-    if (!rowCount) {
+      const { rows } = await this._pool.query(query)
+      return rows[0]
+    } catch (error) {
+      console.error(error)
       throw new InvariantError('Failed to add user')
     }
-    return rows[0]
   }
 
   async _checkUsername(username) {
@@ -59,4 +58,4 @@ class UserService {
   }
 }
 
-export default UserService
+module.exports = UserService

@@ -1,5 +1,5 @@
-import InvariantError from '../../exceptions/InvariantError.js'
-import { MailinPayloadSchema, MailinUpdatePayloadSchema } from './schema.js'
+const InvariantError = require('../../exceptions/InvariantError.js')
+const { MailinPayloadSchema, MailinUpdatePayloadSchema } = require('./schema.js')
 
 const MailinValidator = {
   validateMailinPayload: (payload) => {
@@ -16,4 +16,4 @@ const MailinValidator = {
   }
 }
 
-export default MailinValidator
+module.exports = MailinValidator

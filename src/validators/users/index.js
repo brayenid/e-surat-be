@@ -1,5 +1,5 @@
-import UserPayloadSchema from './schema.js'
-import InvariantError from '../../exceptions/InvariantError.js'
+const InvariantError = require('../../exceptions/InvariantError.js')
+const UserPayloadSchema = require('./schema.js')
 
 const UserValidator = {
   validateUserPayload: (payload) => {
@@ -10,4 +10,4 @@ const UserValidator = {
   }
 }
 
-export default UserValidator
+module.exports = UserValidator

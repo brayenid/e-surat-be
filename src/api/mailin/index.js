@@ -1,7 +1,7 @@
-import routes from './routes.js'
-import MailinHandler from './handler.js'
+const routes = require('./routes.js')
+const MailinHandler = require('./handler.js')
 
-export default {
+module.exports = {
   name: 'mailin',
   version: '1.0.0',
   register: async (server, { service, validator }) => {

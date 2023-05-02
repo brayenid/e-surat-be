@@ -1,4 +1,4 @@
-import Joi from 'joi'
+const Joi = require('joi')
 
 const AuthPayloadSchema = Joi.object({
   username: Joi.string().required(),
@@ -9,4 +9,4 @@ const RefreshTokenPayloadSchema = Joi.object({
   refreshToken: Joi.string().required()
 })
 
-export { AuthPayloadSchema, RefreshTokenPayloadSchema }
+module.exports = { AuthPayloadSchema, RefreshTokenPayloadSchema }

@@ -1,4 +1,4 @@
-import Joi from 'joi'
+const Joi = require('joi')
 
 const UserPayloadSchema = Joi.object({
   username: Joi.string().required(),
@@ -7,4 +7,4 @@ const UserPayloadSchema = Joi.object({
   password: Joi.string().required()
 })
 
-export default UserPayloadSchema
+module.exports = UserPayloadSchema

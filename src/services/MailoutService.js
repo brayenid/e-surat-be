@@ -2,48 +2,51 @@ const { Pool } = require('pg')
 const { nanoid } = require('nanoid')
 const InvariantError = require('../exceptions/InvariantError.js')
 
-class MailinService {
+class MailoutService {
   constructor() {
     this._pool = new Pool()
   }
 
   async addMail(payload) {
     try {
-      const { nomorBerkas, tanggalMasuk, nomorSurat, perihal, pengantar, penerima } = payload
-      const id = `suratmasuk-${nanoid(8)}`
+      const { nomorBerkas, alamatPenerima, tanggalKeluar, perihal, pengirim } = payload
+      const id = `suratkeluar-${nanoid(8)}`
 
       const query = {
-        text: 'INSERT INTO surat_masuk VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id',
-        values: [id, nomorBerkas, tanggalMasuk, nomorSurat, perihal, pengantar, penerima]
+        text: 'INSERT INTO surat_keluar VALUES($1, $2, $3, $4, $5, $6) RETURNING id',
+        values: [id, nomorBerkas, alamatPenerima, tanggalKeluar, perihal, pengirim]
       }
 
       const { rows } = await this._pool.query(query)
-      return rows[0].id
+
+      return rows[0]
     } catch (error) {
-      console.log(error)
-      throw new InvariantError('Adding new mail in failed')
+      console.error(error)
+      throw new InvariantError('Add new mail out failed!')
     }
   }
 
   async updateMail(id, payload) {
     try {
-      const { nomorBerkas, tanggalMasuk, nomorSurat, perihal, pengantar } = payload
+      const { nomorBerkas, alamatPenerima, tanggalKeluar, perihal } = payload
       const updated = true
       const query = {
-        text: 'UPDATE surat_masuk SET nomor_berkas = $1, tanggal_masuk = $2, nomor_surat = $3, perihal = $4, pengantar = $5, updated = $6 WHERE id = $7 RETURNING id',
-        values: [nomorBerkas, tanggalMasuk, nomorSurat, perihal, pengantar, updated, id]
+        text: 'UPDATE surat_keluar SET nomor_berkas = $1, alamat_penerima = $2, tanggal_keluar = $3, perihal = $4, updated = $5 WHERE id = $6 RETURNING id',
+        values: [nomorBerkas, alamatPenerima, tanggalKeluar, perihal, updated, id]
       }
+
       const { rows } = await this._pool.query(query)
 
       return rows[0].id
     } catch (error) {
+      console.error(error)
       throw new InvariantError('Update mail in failed')
     }
   }
 
   async checkMailAvailability(id) {
     const query = {
-      text: 'SELECT id FROM surat_masuk WHERE id = $1',
+      text: 'SELECT id FROM surat_keluar WHERE id = $1',
       values: [id]
     }
 
@@ -57,7 +60,7 @@ class MailinService {
 
   async deleteMail(id) {
     const query = {
-      text: 'DELETE FROM surat_masuk WHERE id = $1',
+      text: 'DELETE FROM surat_keluar WHERE id = $1',
       values: [id]
     }
 
@@ -65,4 +68,4 @@ class MailinService {
   }
 }
 
-module.exports = MailinService
+module.exports = MailoutService

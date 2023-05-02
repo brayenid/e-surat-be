@@ -1,7 +1,7 @@
-import routes from './routes.js'
-import AuthenticationHandler from './handler.js'
+const routes = require('./routes.js')
+const AuthenticationHandler = require('./handler.js')
 
-export default {
+module.exports = {
   name: 'authentication',
   version: '1.0.0',
   register: async (server, { service, validator, userService, tokenManager }) => {

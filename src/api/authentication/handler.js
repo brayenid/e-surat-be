@@ -1,4 +1,3 @@
-import autoBind from 'auto-bind'
 class AuthenticationHandler {
   constructor(service, validator, userService, tokenManager) {
     this._service = service
@@ -6,7 +5,9 @@ class AuthenticationHandler {
     this._userService = userService
     this._tokenManager = tokenManager
 
-    autoBind(this)
+    this.postAuthHandler = this.postAuthHandler.bind(this)
+    this.putAuthHandler = this.putAuthHandler.bind(this)
+    this.deleteAuthHandler = this.deleteAuthHandler.bind(this)
   }
 
   async postAuthHandler(request, h) {
@@ -64,4 +65,4 @@ class AuthenticationHandler {
   }
 }
 
-export default AuthenticationHandler
+module.exports = AuthenticationHandler

@@ -1,11 +1,11 @@
-import autoBind from 'auto-bind'
-
 class MailinHandler {
   constructor(service, validator) {
     this._service = service
     this._validator = validator
 
-    autoBind(this)
+    this.postMailinHandler = this.postMailinHandler.bind(this)
+    this.putMailinHandler = this.putMailinHandler.bind(this)
+    this.deleteMailinHandler = this.deleteMailinHandler.bind(this)
   }
 
   async postMailinHandler(request, h) {
@@ -32,7 +32,7 @@ class MailinHandler {
   async putMailinHandler(request, h) {
     const { id: mailId } = request.params
     this._validator.validateMailinUpdatePayload(request.payload)
-
+    await this._service.checkMailAvailability(mailId)
     const id = await this._service.updateMail(mailId, request.payload)
     const response = h.response({
       status: 'success',
@@ -47,6 +47,7 @@ class MailinHandler {
 
   async deleteMailinHandler(request, h) {
     const { id } = request.params
+    await this._service.checkMailAvailability(id)
     await this._service.deleteMail(id)
 
     const response = h.response({
@@ -58,4 +59,4 @@ class MailinHandler {
   }
 }
 
-export default MailinHandler
+module.exports = MailinHandler

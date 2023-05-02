@@ -11,7 +11,7 @@ exports.up = (pgm) => {
       default: null
     },
     tanggal_masuk: {
-      type: 'timestamp',
+      type: 'TEXT',
       notNull: true
     },
     nomor_surat: {
@@ -29,6 +29,10 @@ exports.up = (pgm) => {
     penerima: {
       type: 'VARCHAR(30)',
       notNull: true
+    },
+    updated: {
+      type: 'BOOLEAN',
+      default: false
     }
   })
   pgm.addConstraint('surat_masuk', 'fk_surat_masuk.penerima_users.id', 'FOREIGN KEY(penerima) REFERENCES users(id) ON DELETE CASCADE')

@@ -1,6 +1,7 @@
-import Jwt from '@hapi/jwt'
-import config from '../../config.js'
-import InvariantError from '../exceptions/InvariantError.js'
+const Jwt = require('@hapi/jwt')
+const config = require('../../../config.js')
+const InvariantError = require('../../exceptions/InvariantError.js')
+
 const TokenManager = {
   generateAccessToken: (payload) => Jwt.token.generate(payload, config.token.access),
   generateRefreshToken: (payload) => Jwt.token.generate(payload, config.token.refresh),
@@ -16,4 +17,4 @@ const TokenManager = {
   }
 }
 
-export default TokenManager
+module.exports = TokenManager

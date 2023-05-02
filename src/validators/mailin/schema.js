@@ -1,4 +1,4 @@
-import Joi from 'joi'
+const Joi = require('joi')
 
 const MailinPayloadSchema = Joi.object({
   nomorBerkas: Joi.string(),
@@ -16,4 +16,4 @@ const MailinUpdatePayloadSchema = Joi.object({
   pengantar: Joi.string()
 })
 
-export { MailinPayloadSchema, MailinUpdatePayloadSchema }
+module.exports = { MailinPayloadSchema, MailinUpdatePayloadSchema }

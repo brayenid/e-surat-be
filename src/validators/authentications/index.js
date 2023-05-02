@@ -1,5 +1,5 @@
-import InvariantError from '../../exceptions/InvariantError.js'
-import { AuthPayloadSchema, RefreshTokenPayloadSchema } from './schema.js'
+const InvariantError = require('../../exceptions/InvariantError.js')
+const { AuthPayloadSchema, RefreshTokenPayloadSchema } = require('./schema.js')
 
 const AuthValidator = {
   validateAuthPayload: (payload) => {
@@ -15,5 +15,4 @@ const AuthValidator = {
     }
   }
 }
-
-export default AuthValidator
+module.exports = AuthValidator
