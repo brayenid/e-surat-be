@@ -63,6 +63,27 @@ class MailinService {
 
     await this._pool.query(query)
   }
+
+  async getMailins(pageNumber = 1, pageSize = 10) {
+    const offset = (pageNumber - 1) * pageSize
+    const query = {
+      text: 'SELECT * FROM surat_masuk LIMIT $1 OFFSET $2',
+      values: [pageSize, offset]
+    }
+
+    const { rows } = await this._pool.query(query)
+    return rows
+  }
+
+  async getMailinsBySearch(search) {
+    const query = {
+      text: 'SELECT nomor_berkas, tanggal_masuk, perihal, pengantar FROM surat_masuk WHERE perihal ILIKE $1 OR pengantar ILIKE $1 LIMIT 50',
+      values: [`%${search}%`]
+    }
+
+    const { rows } = await this._pool.query(query)
+    return rows
+  }
 }
 
 module.exports = MailinService

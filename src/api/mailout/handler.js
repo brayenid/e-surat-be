@@ -6,6 +6,8 @@ class MailoutHandler {
     this.postMailoutHandler = this.postMailoutHandler.bind(this)
     this.putMailoutHandler = this.putMailoutHandler.bind(this)
     this.deleteMailoutHandler = this.deleteMailoutHandler.bind(this)
+    this.getMailoutHandler = this.getMailoutHandler.bind(this)
+    this.getMailoutsBySearchHandler = this.getMailoutsBySearchHandler.bind(this)
   }
 
   async postMailoutHandler(request, h) {
@@ -52,6 +54,40 @@ class MailoutHandler {
     const response = h.response({
       status: 'success',
       message: 'Mail out deleted'
+    })
+    response.code(200)
+    return response
+  }
+
+  async getMailoutHandler(request, h) {
+    const { page, size } = request.query
+    const { rows, rowCount } = await this._service.getMailouts(page, size)
+    const response = h.response({
+      status: 'success',
+      dataLength: rowCount,
+      data: rows
+    })
+    response.code(200)
+    return response
+  }
+
+  async getMailoutsBySearchHandler(request, h) {
+    const { q } = request.query
+    if (!q) {
+      const response = h.response({
+        status: 'fail',
+        message: 'Do not forget the query!'
+      })
+      response.code(404)
+      return response
+    }
+
+    const data = await this._service.getMailoutsBySearchPerihal(q)
+
+    const response = h.response({
+      status: 'success',
+      dataLength: data.length,
+      data
     })
     response.code(200)
     return response

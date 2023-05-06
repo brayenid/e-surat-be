@@ -22,6 +22,16 @@ const routes = (handler) => [
     options: {
       auth: 'esurat_jwt'
     }
+  },
+  {
+    method: 'GET',
+    path: '/suratkeluar',
+    handler: handler.getMailoutHandler
+  },
+  {
+    method: 'GET',
+    path: '/suratkeluar/search',
+    handler: handler.getMailoutsBySearchHandler
   }
 ]
 module.exports = routes

@@ -66,6 +66,30 @@ class MailoutService {
 
     await this._pool.query(query)
   }
+
+  async getMailouts(pageNumber = 1, pageSize = 10) {
+    const offset = (pageNumber - 1) * pageSize
+    const query = {
+      text: 'SELECT * FROM surat_keluar LIMIT $1 OFFSET $2',
+      values: [pageSize, offset]
+    }
+
+    const { rows, rowCount } = await this._pool.query(query)
+    if (!rowCount) {
+      throw new InvariantError('No mail out found!')
+    }
+    return { rows, rowCount }
+  }
+
+  async getMailoutsBySearchPerihal(search) {
+    const query = {
+      text: 'SELECT nomor_berkas, tanggal_keluar, perihal, alamat_penerima FROM surat_keluar WHERE perihal ILIKE $1 OR alamat_penerima ILIKE $1 LIMIT 50',
+      values: [`%${search}%`]
+    }
+
+    const { rows } = await this._pool.query(query)
+    return rows
+  }
 }
 
 module.exports = MailoutService

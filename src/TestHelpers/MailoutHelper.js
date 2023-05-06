@@ -24,6 +24,57 @@ const MailoutHelper = {
       console.error(error)
     }
   },
+  async addManyMailouts(mails = 15) {
+    await UserHelpers.addUser()
+    for (let i = 0; i < mails; i++) {
+      try {
+        const payload = {
+          id: `suratkeluar-12${i}`,
+          nomorBerkas: `berkas-12${i}`,
+          alamatPenerima: `Dinas ${i}`,
+          tanggalKeluar: `20${i}`,
+          perihal: `Ini adalah surat ${i}`,
+          pengirim: 'user-123'
+        }
+
+        const query = {
+          text: 'INSERT INTO surat_keluar VALUES($1, $2, $3, $4, $5, $6)',
+          values: [payload.id, payload.nomorBerkas, payload.alamatPenerima, payload.tanggalKeluar, payload.perihal, payload.pengirim]
+        }
+
+        await pool.query(query)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+  },
+  async addMailsWithDifferentTitle(mails = ['apple', 'application', 'orange', 'organization', 'zelda', 'zebra']) {
+    await UserHelpers.addUser()
+    const dinas = ['dinkes', 'dinsos', 'disdik', 'dispora', 'disdik', 'disdik']
+
+    for (let i = 0; i < mails.length; i++) {
+      const mail = mails[i]
+      try {
+        const payload = {
+          id: `suratkeluar-12${i}`,
+          nomorBerkas: `berkas-12${i}`,
+          alamatPenerima: dinas[i],
+          tanggalKeluar: `20${i}`,
+          perihal: mail,
+          pengirim: 'user-123'
+        }
+
+        const query = {
+          text: 'INSERT INTO surat_keluar VALUES($1, $2, $3, $4, $5, $6)',
+          values: [payload.id, payload.nomorBerkas, payload.alamatPenerima, payload.tanggalKeluar, payload.perihal, payload.pengirim]
+        }
+
+        await pool.query(query)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+  },
   async getMailouts() {
     const { rows } = await pool.query('SELECT * FROM surat_keluar LIMIT 10')
 

@@ -6,6 +6,8 @@ class MailinHandler {
     this.postMailinHandler = this.postMailinHandler.bind(this)
     this.putMailinHandler = this.putMailinHandler.bind(this)
     this.deleteMailinHandler = this.deleteMailinHandler.bind(this)
+    this.getMailinHandler = this.getMailinHandler.bind(this)
+    this.getMailinsBySearchHandler = this.getMailinsBySearchHandler.bind(this)
   }
 
   async postMailinHandler(request, h) {
@@ -53,6 +55,41 @@ class MailinHandler {
     const response = h.response({
       status: 'success',
       message: 'Mail in deleted'
+    })
+    response.code(200)
+    return response
+  }
+
+  async getMailinHandler(request, h) {
+    const { page, size } = request.query
+    const data = await this._service.getMailins(page, size)
+
+    const response = h.response({
+      status: 'success',
+      dataLength: data.length,
+      data
+    })
+    response.code(200)
+    return response
+  }
+
+  async getMailinsBySearchHandler(request, h) {
+    const { q, by } = request.query
+    if (!q) {
+      const response = h.response({
+        status: 'fail',
+        message: 'Do not forget the query!'
+      })
+      response.code(404)
+      return response
+    }
+
+    const data = await this._service.getMailinsBySearch(q, by)
+
+    const response = h.response({
+      status: 'success',
+      dataLength: data.length,
+      data
     })
     response.code(200)
     return response

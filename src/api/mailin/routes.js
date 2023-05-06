@@ -22,6 +22,16 @@ const routes = (handler) => [
     options: {
       auth: 'esurat_jwt'
     }
+  },
+  {
+    method: 'GET',
+    path: '/suratmasuk',
+    handler: handler.getMailinHandler
+  },
+  {
+    method: 'GET',
+    path: '/suratmasuk/search',
+    handler: handler.getMailinsBySearchHandler
   }
 ]
 
