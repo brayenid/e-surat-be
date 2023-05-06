@@ -304,7 +304,7 @@ describe('mailin', () => {
   })
 
   describe('GET /suratmasuk/search?q={q}', () => {
-    it('should still return 200 response with empty array data if the was not found', async () => {
+    it('should still return 200 response with empty array data if the data was not found', async () => {
       const server = await createServer()
       const response = await server.inject({
         method: 'GET',

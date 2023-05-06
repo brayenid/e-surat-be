@@ -74,7 +74,7 @@ class MailinHandler {
   }
 
   async getMailinsBySearchHandler(request, h) {
-    const { q, by } = request.query
+    const { q } = request.query
     if (!q) {
       const response = h.response({
         status: 'fail',
@@ -84,7 +84,7 @@ class MailinHandler {
       return response
     }
 
-    const data = await this._service.getMailinsBySearch(q, by)
+    const data = await this._service.getMailinsBySearch(q)
 
     const response = h.response({
       status: 'success',
