@@ -2,4 +2,3 @@ node_modules
 .env
 esurat.sql
 *.rest
-*.test.js
