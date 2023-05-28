@@ -1,6 +1,7 @@
 const { Pool } = require('pg')
 const { nanoid } = require('nanoid')
 const InvariantError = require('../exceptions/InvariantError.js')
+const NotFoundError = require('../exceptions/NotFoundError.js')
 
 class MailoutService {
   constructor() {
@@ -70,25 +71,45 @@ class MailoutService {
   async getMailouts(pageNumber = 1, pageSize = 10) {
     const offset = (pageNumber - 1) * pageSize
     const query = {
-      text: 'SELECT * FROM surat_keluar LIMIT $1 OFFSET $2',
+      text: 'SELECT id, nomor_berkas, alamat_penerima, tanggal_keluar, perihal FROM surat_keluar ORDER BY created_at DESC LIMIT $1 OFFSET $2',
       values: [pageSize, offset]
     }
 
-    const { rows, rowCount } = await this._pool.query(query)
-    if (!rowCount) {
-      throw new InvariantError('No mail out found!')
-    }
-    return { rows, rowCount }
+    const { rows } = await this._pool.query(query)
+    return rows
   }
 
-  async getMailoutsBySearchPerihal(search) {
+  async getMailoutsTotal() {
+    const { rows } = await this._pool.query('SELECT COUNT(*) AS total FROM surat_keluar')
+    return rows[0].total
+  }
+
+  async getMailoutsSourceFrequency() {
+    const { rows } = await this._pool.query('SELECT alamat_penerima AS source, COUNT(*) AS frequency FROM surat_keluar GROUP BY alamat_penerima')
+    return rows
+  }
+
+  async getMailoutsBySearch(search) {
     const query = {
-      text: 'SELECT nomor_berkas, tanggal_keluar, perihal, alamat_penerima FROM surat_keluar WHERE perihal ILIKE $1 OR alamat_penerima ILIKE $1 LIMIT 50',
+      text: 'SELECT id, perihal, alamat_penerima FROM surat_keluar WHERE perihal ILIKE $1 OR alamat_penerima ILIKE $1 LIMIT 50',
       values: [`%${search}%`]
     }
 
     const { rows } = await this._pool.query(query)
     return rows
+  }
+
+  async getMailoutDetail(id) {
+    const query = {
+      text: 'SELECT * FROM surat_keluar WHERE id = $1',
+      values: [id]
+    }
+    const { rows, rowCount } = await this._pool.query(query)
+    if (!rowCount) {
+      throw new NotFoundError('Invalid mailout id')
+    }
+
+    return rows[0]
   }
 }
 

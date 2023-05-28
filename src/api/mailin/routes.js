@@ -32,6 +32,16 @@ const routes = (handler) => [
     method: 'GET',
     path: '/suratmasuk/search',
     handler: handler.getMailinsBySearchHandler
+  },
+  {
+    method: 'GET',
+    path: '/suratmasuk/{id}',
+    handler: handler.getMailinDetailHandler
+  },
+  {
+    method: 'GET',
+    path: '/suratmasuk/total',
+    handler: handler.getMailinsTotalHandler
   }
 ]
 

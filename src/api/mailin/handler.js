@@ -8,6 +8,8 @@ class MailinHandler {
     this.deleteMailinHandler = this.deleteMailinHandler.bind(this)
     this.getMailinHandler = this.getMailinHandler.bind(this)
     this.getMailinsBySearchHandler = this.getMailinsBySearchHandler.bind(this)
+    this.getMailinDetailHandler = this.getMailinDetailHandler.bind(this)
+    this.getMailinsTotalHandler = this.getMailinsTotalHandler.bind(this)
   }
 
   async postMailinHandler(request, h) {
@@ -90,6 +92,33 @@ class MailinHandler {
       status: 'success',
       dataLength: data.length,
       data
+    })
+    response.code(200)
+    return response
+  }
+
+  async getMailinDetailHandler(request, h) {
+    const { id } = request.params
+    const data = await this._service.getMailinDetail(id)
+
+    const response = h.response({
+      status: 'success',
+      data
+    })
+    response.code(200)
+    return response
+  }
+
+  async getMailinsTotalHandler(request, h) {
+    const total = await this._service.getMailinsTotal()
+    const mailSource = await this._service.getMailinsSourceFrequency()
+
+    const response = h.response({
+      status: 'success',
+      data: {
+        total,
+        mailSource
+      }
     })
     response.code(200)
     return response

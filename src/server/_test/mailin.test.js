@@ -357,4 +357,52 @@ describe('mailin', () => {
       expect(responseJson.message).toEqual('Do not forget the query!')
     })
   })
+
+  describe('GET /suratmasuk/{id}', () => {
+    it('should throw 404 error for not found mail with this id', async () => {
+      const server = await createServer()
+      const response = await server.inject({
+        method: 'GET',
+        url: '/suratmasuk/suratmasuk-123'
+      })
+
+      const responseJson = JSON.parse(response.payload)
+
+      expect(response.statusCode).toEqual(404)
+      expect(responseJson.status).toEqual('fail')
+      expect(responseJson.message).toEqual('Invalid mailin id')
+    })
+
+    it('should return response detail properly for valid id', async () => {
+      await MailinHelper.addMailin()
+      const server = await createServer()
+      const response = await server.inject({
+        method: 'GET',
+        url: '/suratmasuk/suratmasuk-123'
+      })
+
+      const responseJson = JSON.parse(response.payload)
+
+      expect(response.statusCode).toEqual(200)
+      expect(responseJson.status).toEqual('success')
+      expect(typeof responseJson.data).toEqual('object')
+    })
+  })
+
+  describe('GET /suratmasuk/total', () => {
+    it('should response the total of the mail', async () => {
+      await MailinHelper.addManyMailins(10)
+      const server = await createServer()
+      const response = await server.inject({
+        method: 'GET',
+        url: '/suratmasuk/total'
+      })
+
+      const responseJson = JSON.parse(response.payload)
+      expect(response.statusCode).toEqual(200)
+      expect(responseJson.status).toEqual('success')
+      expect(responseJson.data.total).toEqual('10')
+      expect(responseJson.data.mailSource).toHaveLength(5)
+    })
+  })
 })

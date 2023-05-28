@@ -33,6 +33,11 @@ exports.up = (pgm) => {
     updated: {
       type: 'BOOLEAN',
       default: false
+    },
+    created_at: {
+      type: 'TIMESTAMP WITH TIME ZONE',
+      notNull: true,
+      default: pgm.func('current_timestamp')
     }
   })
   pgm.addConstraint('surat_masuk', 'fk_surat_masuk.penerima_users.id', 'FOREIGN KEY(penerima) REFERENCES users(id) ON DELETE CASCADE')

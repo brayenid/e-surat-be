@@ -30,10 +30,18 @@ const createServer = async () => {
     port: config.server.port,
     routes: {
       cors: {
-        origin: ['*']
+        origin: ['*'],
+        credentials: true
       }
     }
   })
+
+  // server.state('refreshToken', {
+  //   ttl: 24 * 60 * 60 * 1000, // waktu expired dalam milidetik
+  //   isHttpOnly: true,
+  //   isSameSite: 'None',
+  //   isSecure: false
+  // })
 
   server.route({
     method: 'GET',
@@ -59,7 +67,8 @@ const createServer = async () => {
       return {
         isValid: true,
         credentials: {
-          id: artifacts.decoded.payload.id
+          id: artifacts.decoded.payload.id,
+          exp: artifacts.decoded.payload.exp
         }
       }
     }

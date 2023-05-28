@@ -30,6 +30,7 @@ class AuthenticationHandler {
       }
     })
     response.code(200)
+    // response.state('refreshToken', refreshToken) //tidak digunakan sekarang, hanya tidak dihapus
     return response
   }
 
@@ -55,12 +56,12 @@ class AuthenticationHandler {
     const { refreshToken } = request.payload
     await this._service.verifyRefreshToken(refreshToken)
     await this._service.deleteRefreshToken(refreshToken)
-
     const response = h.response({
       status: 'success',
       message: 'Logout successfully'
     })
     response.code(200)
+    // response.unstate('refreshToken') //tidak digunakan hanya untuk bayangan ke depan menggunakan cookie
     return response
   }
 }

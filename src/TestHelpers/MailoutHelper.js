@@ -26,12 +26,14 @@ const MailoutHelper = {
   },
   async addManyMailouts(mails = 15) {
     await UserHelpers.addUser()
+    const penerima = ['dinkes', 'dinsos', 'disdik', 'dinsos', 'disnaker', 'disnaker', 'dpmpk', 'dpmpk', 'dinsos', 'dpmpk', 'disdik', 'dinkes', 'disdik', 'dinsos', 'dinsos']
+
     for (let i = 0; i < mails; i++) {
       try {
         const payload = {
           id: `suratkeluar-12${i}`,
           nomorBerkas: `berkas-12${i}`,
-          alamatPenerima: `Dinas ${i}`,
+          alamatPenerima: penerima[i],
           tanggalKeluar: `20${i}`,
           perihal: `Ini adalah surat ${i}`,
           pengirim: 'user-123'

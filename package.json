@@ -7,7 +7,8 @@
     "dev": "nodemon src/app.js",
     "migrate": "node-pg-migrate",
     "test": "jest -i",
-    "test:watch": "jest --watch -i"
+    "test:watch": "jest --watch -i",
+    "start": "node src/app.js"
   },
   "keywords": [],
   "author": "",

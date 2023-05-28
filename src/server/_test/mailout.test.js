@@ -252,7 +252,7 @@ describe('mailin', () => {
   })
 
   describe('GET /suratkeluar', () => {
-    it('should send no mail yet message when mailout was empty', async () => {
+    it('should send the response, no matter if its 0, just say "ok"', async () => {
       const server = await createServer()
       const response = await server.inject({
         method: 'GET',
@@ -260,9 +260,9 @@ describe('mailin', () => {
       })
       const responseJson = JSON.parse(response.payload)
 
-      expect(response.statusCode).toEqual(400)
-      expect(responseJson.status).toEqual('fail')
-      expect(responseJson.message).toEqual('No mail out found!')
+      expect(response.statusCode).toEqual(200)
+      expect(responseJson.status).toEqual('success')
+      expect(responseJson.data).toHaveLength(0)
     })
 
     it('should send valid response with 10 first mailout', async () => {
@@ -347,6 +347,55 @@ describe('mailin', () => {
       expect(response.statusCode).toEqual(404)
       expect(responseJson.status).toEqual('fail')
       expect(responseJson.message).toEqual('Do not forget the query!')
+    })
+  })
+
+  describe('GET /suratkeluar/{id}', () => {
+    it('should throw 404 error for not found mail with this id', async () => {
+      const server = await createServer()
+      const response = await server.inject({
+        method: 'GET',
+        url: '/suratkeluar/suratkeluar-123'
+      })
+
+      const responseJson = JSON.parse(response.payload)
+
+      expect(response.statusCode).toEqual(404)
+      expect(responseJson.status).toEqual('fail')
+      expect(responseJson.message).toEqual('Invalid mailout id')
+    })
+
+    it('should return response detail properly for valid id', async () => {
+      await MailoutHelper.addMailout()
+      const server = await createServer()
+      const response = await server.inject({
+        method: 'GET',
+        url: '/suratkeluar/suratkeluar-123'
+      })
+
+      const responseJson = JSON.parse(response.payload)
+
+      expect(response.statusCode).toEqual(200)
+      expect(responseJson.status).toEqual('success')
+      expect(typeof responseJson.data).toEqual('object')
+    })
+  })
+
+  describe('GET /suratmasuk/total', () => {
+    it('should response the total of the mail', async () => {
+      await MailoutHelper.addManyMailouts(10)
+      const server = await createServer()
+      const response = await server.inject({
+        method: 'GET',
+        url: '/suratkeluar/total'
+      })
+
+      const responseJson = JSON.parse(response.payload)
+      console.log(responseJson)
+      expect(response.statusCode).toEqual(200)
+      expect(responseJson.status).toEqual('success')
+      expect(responseJson.data.total).toEqual('10')
+      expect(responseJson.data.mailSource).toHaveLength(5)
     })
   })
 })

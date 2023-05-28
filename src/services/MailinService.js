@@ -1,6 +1,7 @@
 const { Pool } = require('pg')
 const { nanoid } = require('nanoid')
 const InvariantError = require('../exceptions/InvariantError.js')
+const NotFoundError = require('../exceptions/NotFoundError.js')
 
 class MailinService {
   constructor() {
@@ -67,7 +68,7 @@ class MailinService {
   async getMailins(pageNumber = 1, pageSize = 10) {
     const offset = (pageNumber - 1) * pageSize
     const query = {
-      text: 'SELECT * FROM surat_masuk LIMIT $1 OFFSET $2',
+      text: 'SELECT id, nomor_berkas, tanggal_masuk, perihal, pengantar FROM surat_masuk ORDER BY created_at DESC LIMIT $1 OFFSET $2',
       values: [pageSize, offset]
     }
 
@@ -75,14 +76,37 @@ class MailinService {
     return rows
   }
 
+  async getMailinsTotal() {
+    const { rows } = await this._pool.query('SELECT COUNT(*) AS total FROM surat_masuk')
+    return rows[0].total
+  }
+
+  async getMailinsSourceFrequency() {
+    const { rows } = await this._pool.query('SELECT pengantar AS source, COUNT(*) AS frequency FROM surat_masuk GROUP BY pengantar')
+    return rows
+  }
+
   async getMailinsBySearch(search) {
     const query = {
-      text: 'SELECT nomor_berkas, tanggal_masuk, perihal, pengantar FROM surat_masuk WHERE perihal ILIKE $1 OR pengantar ILIKE $1 LIMIT 50',
+      text: 'SELECT id, perihal, pengantar FROM surat_masuk WHERE perihal ILIKE $1 OR pengantar ILIKE $1 LIMIT 50',
       values: [`%${search}%`]
     }
 
     const { rows } = await this._pool.query(query)
     return rows
+  }
+
+  async getMailinDetail(id) {
+    const query = {
+      text: 'SELECT * FROM surat_masuk WHERE id = $1',
+      values: [id]
+    }
+    const { rows, rowCount } = await this._pool.query(query)
+    if (!rowCount) {
+      throw new NotFoundError('Invalid mailin id')
+    }
+
+    return rows[0]
   }
 }
 

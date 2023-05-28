@@ -27,6 +27,7 @@ const MailinHelper = {
   },
   async addManyMailins(mails = 15) {
     await UserHelpers.addUser()
+    const pengantar = ['dinkes', 'dinsos', 'disdik', 'dinsos', 'disnaker', 'disnaker', 'dpmpk', 'dpmpk', 'dinsos', 'dpmpk', 'disdik', 'dinkes', 'disdik', 'dinsos', 'dinsos']
     for (let i = 0; i < mails; i++) {
       try {
         const payload = {
@@ -35,7 +36,7 @@ const MailinHelper = {
           tanggalMasuk: `202${i}`,
           nomorSurat: `surat-12${i}`,
           perihal: `Ini adalah surat ${i}`,
-          pengantar: `orang ${i}`,
+          pengantar: pengantar[i],
           penerima: 'user-123'
         }
 

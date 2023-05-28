@@ -32,6 +32,16 @@ const routes = (handler) => [
     method: 'GET',
     path: '/suratkeluar/search',
     handler: handler.getMailoutsBySearchHandler
+  },
+  {
+    method: 'GET',
+    path: '/suratkeluar/{id}',
+    handler: handler.getMailoutDetailHandler
+  },
+  {
+    method: 'GET',
+    path: '/suratkeluar/total',
+    handler: handler.getMailoutsTotalHandler
   }
 ]
 module.exports = routes

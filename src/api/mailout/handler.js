@@ -8,6 +8,8 @@ class MailoutHandler {
     this.deleteMailoutHandler = this.deleteMailoutHandler.bind(this)
     this.getMailoutHandler = this.getMailoutHandler.bind(this)
     this.getMailoutsBySearchHandler = this.getMailoutsBySearchHandler.bind(this)
+    this.getMailoutDetailHandler = this.getMailoutDetailHandler.bind(this)
+    this.getMailoutsTotalHandler = this.getMailoutsTotalHandler.bind(this)
   }
 
   async postMailoutHandler(request, h) {
@@ -61,11 +63,11 @@ class MailoutHandler {
 
   async getMailoutHandler(request, h) {
     const { page, size } = request.query
-    const { rows, rowCount } = await this._service.getMailouts(page, size)
+    const data = await this._service.getMailouts(page, size)
     const response = h.response({
       status: 'success',
-      dataLength: rowCount,
-      data: rows
+      dataLength: data.length,
+      data
     })
     response.code(200)
     return response
@@ -82,12 +84,39 @@ class MailoutHandler {
       return response
     }
 
-    const data = await this._service.getMailoutsBySearchPerihal(q)
+    const data = await this._service.getMailoutsBySearch(q)
 
     const response = h.response({
       status: 'success',
       dataLength: data.length,
       data
+    })
+    response.code(200)
+    return response
+  }
+
+  async getMailoutDetailHandler(request, h) {
+    const { id } = request.params
+    const data = await this._service.getMailoutDetail(id)
+
+    const response = h.response({
+      status: 'success',
+      data
+    })
+    response.code(200)
+    return response
+  }
+
+  async getMailoutsTotalHandler(request, h) {
+    const total = await this._service.getMailoutsTotal()
+    const mailSource = await this._service.getMailoutsSourceFrequency()
+
+    const response = h.response({
+      status: 'success',
+      data: {
+        total,
+        mailSource
+      }
     })
     response.code(200)
     return response
